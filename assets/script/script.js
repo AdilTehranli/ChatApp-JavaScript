@@ -7,20 +7,22 @@ const chatInputForm = document.querySelector(".chat-input-form");
 const chatInput = document.querySelector(".chat-input");
 const clearChatBtn = document.querySelector(".clear-chat-button");
 
-const chatMessageElement = (message) => `
-<div class="message ${message.sender === "jonh" ? "blue-bg" : "gray-bg"}">
+const messages =  []
+const createChatMessageElement = (message) => `
+<div class="message ${message.sender === 'John' ? 'blue-bg' : 'gray-bg'}">
 <div class="message-sender">${message.sender}</div>
 <div class="message-text">${message.text}</div>
 <div class="message-timestamp">${message.timestamp}</div>
 </div>
 `;
 
+
 let messageSender = "John";
 
 const updateMessageSender = (name) => {
   messageSender = name;
   chatHeader.innerHTML = `${messageSender} chating...`;
-  chatInput.placeholder = `Type here, ${messageSender}`;
+  chatInput.placeholder = `Type here, ${messageSender}... `;
 
  if (name === 'John') {
     johnSelectorBtn.classList.add('active-person')
@@ -30,6 +32,8 @@ const updateMessageSender = (name) => {
     janeSelectorBtn.classList.add('active-person')
     johnSelectorBtn.classList.remove('active-person')
   }
+
+  chatInput.focus()
 };
 
 johnSelectorBtn.onclick = () => updateMessageSender('John')
@@ -49,4 +53,14 @@ const sendMessage = (e) => {
     text: chatInput.value,
     timestamp,
   };
+  messages.push(message)
+  localStorage.setItem('messages', JSON.stringify(message))
+  chatMessages.innerHTML += createChatMessageElement(message)
+
+  chatInputForm.reset()
+  chatMessages.scrollTop=chatMessages.scrollHeight
+
+  chatInput.value = ""
 };
+
+chatInputForm.addEventListener("submit",sendMessage)
